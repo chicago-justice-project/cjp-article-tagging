@@ -1,5 +1,5 @@
 import tagnews
-
+from tagnews.crimetype.tag import TAGS
 
 class Test_Crimetype():
     @classmethod
@@ -15,5 +15,13 @@ class Test_Crimetype():
         max_prob = probs.max()
         max_type = probs.idxmax()
         tags = self.model.tagtext(article,
-                                  prob_thresh=max_prob-0.001)
+                                  prob_thresh=max_prob - 0.001)
         assert max_type in tags
+
+    def test_get_contributions(self):
+        article = 'This is an article about drugs and gangs \
+            written and photographed by the amazing spiderman'
+        contributions = self.model.get_contributions(article)
+
+        assert contributions.shape[0] == len(TAGS)
+        assert contributions.shape[1] == (set(article.split(' ')))

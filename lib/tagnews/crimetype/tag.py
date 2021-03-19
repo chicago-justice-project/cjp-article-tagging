@@ -173,12 +173,12 @@ class CrimeTags():
         and       -0.316201
         .         -0.853208
         """
-        p = {}
         vec = self.vectorizer.transform([text])
-        vec_inv = self.vectorizer.inverse_transform(vec)
-        for i, tag in enumerate(TAGS):
-            p[tag] = pd.DataFrame(
-                index=vec_inv,
-                data={'weight': self.clf.coef_[i, vec.nonzero()[1]]}
-            )
-        return pd.Panel(p)
+        vec_inv = self.vectorizer.inverse_transform(vec)[1]
+
+        df = pd.DataFrame(columns=vec_inv, index=TAGS)
+
+        for j, word in enumerate(vec_inv):
+            for i, tag in enumerate(TAGS):
+                df.loc[tag][word] = mod.clf.coef_[i, vec.nonzero()[1][j]]
+        return df
